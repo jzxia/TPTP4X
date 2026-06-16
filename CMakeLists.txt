@@ -69,6 +69,9 @@ set(JJPARSER_SOURCES
 )
 list(TRANSFORM JJPARSER_SOURCES PREPEND "${jjparser_SOURCE_DIR}/")
 
+################################################################################
+# compile to WebAssembly
+
 if(EMSCRIPTEN)
 
   set(JJPARSER_WASM_SOURCES ${JJPARSER_SOURCES})
@@ -161,4 +164,6 @@ target_compile_options(tptp4X_api_smoke PRIVATE ${TPTP4X_CFLAGS_WARNINGS})
 
 install(TARGETS tptp4X RUNTIME DESTINATION "${TPTP_HOME}/ServiceTools")
 
-endif()
+################################################################################
+
+endif()    # EMSCRIPTEN
