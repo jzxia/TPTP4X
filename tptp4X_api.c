@@ -43,9 +43,8 @@ ThisNodeType != blank_line) {
         }
     }
 
-    if (LogicalAnnotatedFormula(State->AnnotatedFormula)) {
-        PrintAnnotatedTSTPNode(State->OutputStream,State->AnnotatedFormula,tptp,1);
-    } else if (*LastNodeType != blank_line || ThisNodeType != blank_line) {
+    // Skip double blank lines
+    if (*LastNodeType != blank_line || ThisNodeType != blank_line) {
         PrintAnnotatedTSTPNode(State->OutputStream,State->AnnotatedFormula,tptp,1);
     }
 
