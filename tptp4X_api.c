@@ -20,30 +20,10 @@ typedef struct {
     READFILE InputStream;
     SIGNATURE Signature;
     ANNOTATEDFORMULA AnnotatedFormula;
-    char * NamesBuffer;
-    int NamesBufferSize;
     FILE * OutputStream;
     char * OutputBuffer;
     size_t OutputLength;
 } TPTP4XPrettyState;
-
-//----Keep the same duplicate-name behavior as the command-line ftptp path.
-static int RecordFormulaName(ANNOTATEDFORMULA AnnotatedFormula,char ** NamesBuffer,
-int * NamesBufferSize) {
-
-    char * Name;
-
-    Name = GetName(AnnotatedFormula,NULL);
-    if (Name == NULL) {
-        return(1);
-    }
-    if (NameInList(Name,*NamesBuffer)) {
-        return(0);
-    }
-    ExtendString(NamesBuffer,Name,NamesBufferSize);
-    ExtendString(NamesBuffer,"\n",NamesBufferSize);
-    return(1);
-}
 
 //----Mirror the output spacing used by ./tptp4X -ftptp for formula streams.
 static int PrintAnnotatedFormulaLikeFtptp(TPTP4XPrettyState * State,
@@ -88,9 +68,6 @@ static void CleanupPrettyState(TPTP4XPrettyState * State) {
     }
     if (State->Signature != NULL) {
         FreeSignature(&(State->Signature));
-    }
-    if (State->NamesBuffer != NULL) {
-        Free((void **)&(State->NamesBuffer));
     }
     if (State->OutputStream != NULL) {
         fclose(State->OutputStream);
@@ -140,19 +117,12 @@ char * tptp4x_pretty_print_tptp(const char * Input) {
     }
     NextToken(State->InputStream);
     State->Signature = NewSignature();
-    State->NamesBuffer = (char *)Malloc(sizeof(String));
-    State->NamesBuffer[0] = '\0';
-    State->NamesBufferSize = sizeof(String);
     LastNodeType = nontype;
 
     while (!CheckTokenType(State->InputStream,endeof)) {
         State->AnnotatedFormula = ParseAndUseAnnotatedFormula(State->InputStream,
 State->Signature);
         if (State->AnnotatedFormula == NULL) {
-            goto finish;
-        }
-        if (!RecordFormulaName(State->AnnotatedFormula,&(State->NamesBuffer),
-&(State->NamesBufferSize))) {
             goto finish;
         }
         if (!PrintAnnotatedFormulaLikeFtptp(State,&LastNodeType)) {

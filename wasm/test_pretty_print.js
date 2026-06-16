@@ -54,6 +54,24 @@ async function main() {
     process.exit(1);
   }
 
+  const duplicateNameInput = [
+    "fof(dup,axiom,p).",
+    "fof(dup,axiom,q).",
+    "",
+  ].join("\n");
+  const duplicateNameResult = await prettyPrintInChild(duplicateNameInput);
+  if (duplicateNameResult.status !== 0) {
+    console.error("Expected duplicate formula names to be tolerated.");
+    process.exit(1);
+  }
+  const duplicateNameCount =
+    (duplicateNameResult.stdout.match(/fof\(dup,axiom,/g) || []).length;
+  if (duplicateNameCount !== 2) {
+    console.error("Expected both duplicate-name formulas to be printed.");
+    console.error(duplicateNameResult.stdout);
+    process.exit(1);
+  }
+
   const badResult = await prettyPrintInChild("fof(bad,axiom,).\n");
   if (badResult.status === 0) {
     console.error("Expected malformed input to fail.");
