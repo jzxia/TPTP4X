@@ -5,6 +5,7 @@
 extern "C" {
 #endif
 
+//----The input is an entire file, possibly with comments and multiple formulae.
 //----Return the pretty-printed string. NULL means local wrapper failure.
 //----Fatal JJParser errors use JJParser's normal exit path, so call this
 //----directly only from a disposable process when parsing untrusted input.
